@@ -48,7 +48,7 @@ class Recipe(models.Model):
         max_length=200,
         verbose_name='Название'
     )
-    image = models.ImageField(
+    image = models.FileField(
         upload_to='recipe_img/',
         verbose_name='Изображение'
     )
@@ -71,7 +71,7 @@ class Recipe(models.Model):
     )
     tags = models.ManyToManyField(
         Tags,
-        through='',
+        through='TagsRecipe',
         verbose_name='Тэги'
     )
 
@@ -86,12 +86,12 @@ class Recipe(models.Model):
 
 class IngredientsRecipe(models.Model):
     """Модель соотношения ингридиентов и рецептов"""
-    recipe = models.ForeignKey(
+    recipe_id = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
         verbose_name='Рецепт'
     )
-    ingredient = models.ForeignKey(
+    ingredients_id = models.ForeignKey(
         Ingredients,
         on_delete=models.CASCADE,
         verbose_name='Ингридиент'

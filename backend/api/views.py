@@ -3,28 +3,23 @@ from json import dumps
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
-from django.db.models import Avg
+# from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-from django_filters.rest_framework import DjangoFilterBackend
+# from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
-from rest_framework.pagination import (LimitOffsetPagination,
-                                       PageNumberPagination)
+from rest_framework.pagination import PageNumberPagination
+# LimitOffsetPagination,
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import AccessToken
-from reviews.models import Categories, Comments, Genres, Review, Title
+from foodgram.models import Ingredients, Recipe, Tags
 
-from api_yamdb import settings
+from backend import settings
 
-from .custom_viewsets import ListCreateDeleteViewSet
-from .filters import TitleFilter
-from .permissions import (AdminOrReadOnly, AuthorOrReadOnly, OnlyAdmin,
-                          OnlyAdminCanGiveRole)
-from .serializers import (CategoriesSerializer, CommentSerializer,
-                          GenresSerializer, RegistrationSerializer,
-                          ReviewSerializer, TitleROSerializer, TitleSerializer,
-                          TokenSerializer, UserSerializer)
+from .permissions import AdminOrReadOnly, OnlyAdmin, OnlyAdminCanGiveRole
+from .serializers import (IngredientsSerializer, RecipeSerializer,
+                          RegistrationSerializer, TagsSerializer,
+                          UserSerializer,)
 
 User = get_user_model()
 
@@ -35,79 +30,41 @@ def get_usr(self):
         username=self.request.user,
     )
 
-# Ingredients, IngredientsRecipe, Recipe, Tags, TagsRecipe
 
+class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
+    """Представление для работы с ингридиентами."""
 
-class CategoriesViewSet(ListCreateDeleteViewSet):
-    """Представление для работы с категориями."""
-    queryset = Categories.objects.all()
-    serializer_class = CategoriesSerializer
+    queryset = Ingredients.objects.all()
+    serializer_class = IngredientsSerializer
     permission_classes = (AdminOrReadOnly,)
-    lookup_field = 'slug'
+    lookup_field = "name"
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('name',)
+    search_fields = ("name",)
 
 
-class GenresViewSet(ListCreateDeleteViewSet):
-    """Представление для работы с жанрами."""
-    queryset = Genres.objects.all()
-    serializer_class = GenresSerializer
+class TagsViewSet(viewsets.ReadOnlyModelViewSet):
+    """Представление для работы с тэгами."""
+
+    queryset = Tags.objects.all()
+    serializer_class = TagsSerializer
     permission_classes = (AdminOrReadOnly,)
-    lookup_field = 'slug'
+    lookup_field = "slug"
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('name',)
+    search_fields = ("name",)
 
 
-class TitleViewSet(viewsets.ModelViewSet):
-    """Представление для работы с произведениями."""
-    queryset = Title.objects.all().annotate(Avg("review__score")).order_by(
-        "id")
-    serializer_class = TitleSerializer
+class RecipeViewSet(viewsets.ModelViewSet):
+    """Представление для работы с тэгами."""
+
+    queryset = Recipe.objects.all()
+    serializer_class = RecipeSerializer
     permission_classes = (AdminOrReadOnly,)
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = TitleFilter
-
-    def get_serializer_class(self):
-        """Функция выбора сериализатора."""
-        if self.action in ('list', 'retrieve'):
-            return TitleROSerializer
-        return TitleSerializer
+    lookup_field = "name"
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ("name",)
 
 
-class ReviewViewSet(viewsets.ModelViewSet):
-    """Представление для работы с отзывами."""
-    serializer_class = ReviewSerializer
-    permission_classes = (AuthorOrReadOnly,)
-
-    def get_queryset(self):
-        url_title_id = self.kwargs.get("url_title_id")
-        return Review.objects.filter(title_id=url_title_id)
-
-    def perform_create(self, serializer):
-        title_id = self.kwargs.get('url_title_id')
-        title = get_object_or_404(Title, id=title_id)
-        serializer.save(author=get_usr(self), title=title)
-
-
-class CommentsViewSet(viewsets.ModelViewSet):
-    """Представление для работы с коментариями."""
-    serializer_class = CommentSerializer
-    pagination_class = LimitOffsetPagination
-    permission_classes = (AuthorOrReadOnly,)
-
-    def get_queryset(self):
-        url_review_id = self.kwargs.get("url_review_id")
-        return Comments.objects.filter(review_id=url_review_id)
-
-    def perform_create(self, serializer):
-        review = get_object_or_404(
-            Review,
-            id=self.kwargs.get("url_review_id")
-        )
-        serializer.save(author=get_usr(self), review_id=review)
-
-
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([AllowAny])
 def register_view(request):
     """
@@ -117,13 +74,10 @@ def register_view(request):
     serializer = RegistrationSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     serializer.save()
-    username = serializer.validated_data['username']
+    username = serializer.validated_data["username"]
     user = get_object_or_404(User, username=username)
     confirmation_code = default_token_generator.make_token(user)
-    body = {
-        "username": username,
-        "confirmation_code": confirmation_code
-    }
+    body = {"username": username, "confirmation_code": confirmation_code}
     json_body = dumps(body)
     send_mail(
         subject="Подтверждение регистрации на сайте yamDB",
@@ -140,20 +94,9 @@ def register_view(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-@api_view(['POST'])
-@permission_classes([AllowAny])
 def token_view(request):
     """Получение токена при POST-запросе."""
-    serializer = TokenSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-    username = serializer.validated_data['username']
-    user = get_object_or_404(User, username=username)
-    if default_token_generator.check_token(
-        user, serializer.validated_data['confirmation_code']
-    ):
-        token = AccessToken.for_user(user)
-        return Response({"token": str(token)}, status.HTTP_200_OK)
-    return Response("Неверный запрос", status.HTTP_400_BAD_REQUEST)
+    pass
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -162,7 +105,7 @@ class UserViewSet(viewsets.ModelViewSet):
     Только для админа.
     """
 
-    permission_classes = (OnlyAdmin, )
+    permission_classes = (OnlyAdmin,)
     serializer_class = UserSerializer
     queryset = User.objects.all()
     lookup_field = "username"
@@ -172,16 +115,13 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=False,
-        methods=['get', 'patch'],
-        permission_classes=[
-            IsAuthenticated,
-            OnlyAdminCanGiveRole
-        ]
+        methods=["get", "patch"],
+        permission_classes=[IsAuthenticated, OnlyAdminCanGiveRole],
     )
     def me(self, request):
         username = request.user.username
         user = get_object_or_404(User, username=username)
-        if request.method == 'PATCH':
+        if request.method == "PATCH":
             serializer = UserSerializer(user, data=request.data, partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
