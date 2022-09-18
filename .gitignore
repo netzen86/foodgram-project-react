@@ -130,3 +130,6 @@ dmypy.json
 
 # .idea
 .idea
+
+# temp file
+token_temp.json
