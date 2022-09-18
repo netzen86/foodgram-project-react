@@ -6,8 +6,8 @@ class Ingredients(models.Model):
     """Модель ингридиентов"""
     name = models.CharField(
         max_length=200,
-        verbose_name='Название'
-    ),
+        verbose_name='Имя'
+    )
     measurement_unit = models.CharField(
         max_length=200,
         verbose_name='Еденица измерения'
@@ -18,23 +18,33 @@ class Ingredients(models.Model):
         verbose_name = 'Ингридиент'
         verbose_name_plural = 'Ингридиенты'
 
+    def __str__(self):
+        return self.name
+
 
 class Tags(models.Model):
     name = models.CharField(
         max_length=200,
-    ),
+        verbose_name='Имя'
+
+    )
     color = models.CharField(
-        max_length=7
-    ),
+        max_length=7,
+        verbose_name='Цвет'
+    )
     slug = models.SlugField(
         max_length=200,
-        unique=True
+        unique=True,
+        verbose_name='Короткое имя'
     )
 
     class Meta:
         ordering = ('id',)
         verbose_name = 'Тэг'
         verbose_name_plural = 'Тэги'
+
+    def __str__(self):
+        return self.name
 
 
 class Recipe(models.Model):
@@ -60,7 +70,7 @@ class Recipe(models.Model):
     )
     is_favorited = models.BooleanField(
         verbose_name='В избранном'
-    ),
+    )
     is_in_shopping_cart = models.BooleanField(
         verbose_name='В списке покупок'
     )

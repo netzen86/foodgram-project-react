@@ -16,7 +16,7 @@ class IngredientsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ingredients
-        fields = ("name", "measurement_unit")
+        fields = ('id', 'name', 'measurement_unit')
 
 
 class TagsSerializer(serializers.ModelSerializer):
@@ -24,7 +24,7 @@ class TagsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tags
-        fields = ("name", "color", "slug")
+        fields = ('id', 'name', 'color', 'slug')
 
 
 class RecipeSerializer(serializers.ModelSerializer):

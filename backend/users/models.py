@@ -35,6 +35,7 @@ class CustomUser(AbstractUser):
         verbose_name='Фамилия'
     )
     is_subscribed = models.BooleanField(
+        default=False,
         verbose_name='Подписан ли текущий пользователь на этого'
     )
     role = models.CharField(

@@ -7,7 +7,7 @@ class IngredientsAdmin(admin.ModelAdmin):
     """Админка для ингридиентов"""
     list_display = ('id', 'name', 'measurement_unit')
     search_fields = ('name',)
-    # list_filter = ('name',)
+    list_filter = ('id', 'name')
     empty_value_display = '-пусто-'
 
 
@@ -31,8 +31,8 @@ class RecipeAdmin(admin.ModelAdmin):
         'is_favorited',
         'is_in_shopping_cart',
     )
-    search_fields = ('name',)
-    list_filter = ('name',)
+    search_fields = ('name', 'text')
+    list_filter = ('id', 'name', 'author',)
     empty_value_display = '-пусто-'
 
 
@@ -40,7 +40,7 @@ class TagsAdmin(admin.ModelAdmin):
     """Админка для тэгов"""
     list_display = ('id', 'name', 'color', 'slug',)
     search_fields = ('name',)
-    list_filter = ('slug',)
+    # list_filter = ('slug',)
     empty_value_display = '-пусто-'
 
 
