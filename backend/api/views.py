@@ -37,7 +37,7 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredients.objects.all()
     serializer_class = IngredientsSerializer
     permission_classes = (AdminOrReadOnly,)
-    lookup_field = "name"
+    lookup_field = "id"
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
 
@@ -48,7 +48,7 @@ class TagsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tags.objects.all()
     serializer_class = TagsSerializer
     permission_classes = (AdminOrReadOnly,)
-    lookup_field = "slug"
+    lookup_field = "id"
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
 
@@ -59,7 +59,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     permission_classes = (AdminOrReadOnly,)
-    lookup_field = "name"
+    lookup_field = "id"
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
 
