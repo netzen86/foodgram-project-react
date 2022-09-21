@@ -1,5 +1,5 @@
 # from datetime import datetime
-
+from djoser import serializers
 from django.contrib.auth import get_user_model
 # from rest_framework.exceptions import ValidationError
 # from rest_framework.generics import get_object_or_404
@@ -79,5 +79,5 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', "username", "email", "first_name",
-                  "last_name", "role")
+        fields = ('id', 'username', 'email', 'first_name',
+                  'last_name', 'is_subscribed')

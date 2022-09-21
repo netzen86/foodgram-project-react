@@ -43,6 +43,7 @@ class CustomUser(AbstractUser):
         default="user",
         choices=CHOICES_ROLE,
     )
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'is_subscribed', 'email']
 
     @property
     def is_admin(self):
