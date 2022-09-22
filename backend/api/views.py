@@ -63,6 +63,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
 
+    def perform_create(self, serializer):
+        serializer.save(author=get_usr(self))
+
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
