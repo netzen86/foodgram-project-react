@@ -29,7 +29,7 @@ class Tags(models.Model):
 
     )
     color = models.CharField(
-        max_length=7,
+        max_length=16,
         verbose_name='Цвет'
     )
     slug = models.SlugField(
@@ -58,10 +58,11 @@ class Recipe(models.Model):
         max_length=200,
         verbose_name='Название'
     )
-    image = models.FileField(
+    image = models.ImageField(
         upload_to='recipe_img/',
-        verbose_name='Изображение'
-    )
+        null=True,
+        default=None
+        )
     text = models.TextField(
         verbose_name='Описание'
     )

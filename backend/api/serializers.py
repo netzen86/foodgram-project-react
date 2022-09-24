@@ -1,4 +1,6 @@
 # from datetime import datetime
+import base64
+from django.core.files.base import ContentFile
 from djoser import serializers
 from django.contrib.auth import get_user_model
 # from rest_framework.exceptions import ValidationError
@@ -11,12 +13,30 @@ from rest_framework import serializers
 User = get_user_model()
 
 
+class Base64ImageField(serializers.ImageField):
+    def to_internal_value(self, data):
+        # Если полученный объект строка, и эта строка
+        # начинается с 'data:image'...
+        if isinstance(data, str) and data.startswith('data:image'):
+            # ...начинаем декодировать изображение из base64.
+            # Сначала нужно разделить строку на части.
+            format, imgstr = data.split(';base64,')
+            # И извлечь расширение файла.
+            ext = format.split('/')[-1]
+            # Затем декодировать сами данные и поместить результат в файл,
+            # которому дать название по шаблону.
+            data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+
+        return super().to_internal_value(data)
+
+
 class IngredientsSerializer(serializers.ModelSerializer):
     """Сериализатор ингридиентов."""
 
     class Meta:
         model = Ingredients
         fields = ('id', 'name', 'measurement_unit')
+        read_only_fields = ('name', 'measurement_unit',)
 
 
 class TagsSerializer(serializers.ModelSerializer):
@@ -29,12 +49,15 @@ class TagsSerializer(serializers.ModelSerializer):
 
 class RecipeSerializer(serializers.ModelSerializer):
     """Сериализатор рецептов."""
+    ingredients = IngredientsSerializer(read_only=True, many=True)
+    image = Base64ImageField()
 
     class Meta:
         model = Recipe
         fields = ('id', 'author', 'name', 'image', 'text', 'cooking_time',
                   'is_favorited', 'is_in_shopping_cart',
                   'ingredients', 'tags')
+        read_only_fields = ('author', 'ingredients',)
 
 
 class RegistrationSerializer(serializers.ModelSerializer):

@@ -133,3 +133,6 @@ dmypy.json
 
 # temp file
 token_temp.json
+
+# папка с медиа
+backend/media
