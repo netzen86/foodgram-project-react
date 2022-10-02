@@ -18,8 +18,8 @@ from backend import settings
 
 from .permissions import AdminOrReadOnly, OnlyAdmin, OnlyAdminCanGiveRole
 from .serializers import (IngredientsSerializer, RecipeSerializer,
-                          RegistrationSerializer, TagsSerializer,
-                          UserSerializer,)
+                          RecipeSerializerWrite, TagsSerializer,
+                          UserSerializer)
 
 User = get_user_model()
 
@@ -63,8 +63,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
 
-    def perform_create(self, serializer):
-        serializer.save(author=get_usr(self))
+    def get_serializer_class(self):
+        if self.action in (
+            "create",
+            "partial_update",
+            "update",
+        ):
+            return RecipeSerializerWrite
+        return RecipeSerializer
 
 
 @api_view(["POST"])
