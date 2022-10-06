@@ -12,4 +12,4 @@ RUN python3 -m pip install --upgrade pip setuptools
 RUN pip3 install -r /app/requirements.txt --no-cache-dir
 
 # Выполнить запуск сервера при старте контейнера.
-CMD ["gunicorn", "backend.wsgi", "--bind", "0:8000"]
+CMD ["gunicorn", "backend.wsgi:application", "--bind", "0:8000"]
