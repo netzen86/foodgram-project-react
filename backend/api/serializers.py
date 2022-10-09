@@ -11,9 +11,9 @@ from typing import Dict
 from rest_framework.relations import SlugRelatedField, ManyRelatedField
 # from rest_framework.validators import UniqueTogetherValidator
 from foodgram.models import Ingredients, IngredientsRecipe, Recipe, Tags
+from users.models import CustomUser as User
 from rest_framework import serializers
 
-User = get_user_model()
 
 
 class Base64ImageField(serializers.ImageField):
@@ -35,6 +35,7 @@ class Base64ImageField(serializers.ImageField):
 
 class UserSerializer(serializers.ModelSerializer):
     """Сериализатор управления пользователем."""
+    is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -46,8 +47,6 @@ class UserSerializer(serializers.ModelSerializer):
             'last_name',
             'is_subscribed',
         )
-
-    is_subscribed = serializers.SerializerMethodField()
 
     def get_is_subscribed(self, obj: User) -> bool:
         user = self.context.get('request').user

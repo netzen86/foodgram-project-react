@@ -40,6 +40,7 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = "id"
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
+    pagination_class = None
 
 
 class TagsViewSet(viewsets.ReadOnlyModelViewSet):
@@ -51,6 +52,7 @@ class TagsViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = "id"
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
+    pagination_class = None
 
 
 class RecipeViewSet(viewsets.ModelViewSet):

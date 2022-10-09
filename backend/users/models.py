@@ -9,16 +9,16 @@ class CustomUser(AbstractUser):
         ('user', 'пользователь'),
         ('admin', 'администратор'),
     )
-    username = models.CharField(
-        max_length=150,
-        unique=True,
-        help_text=('Обязательное поле. 150 символов или меньше.',
-                   'Буквы, цифры и @/./+/-/_.'),
-        error_messages={
-            'unique': 'Пользователь с таким username уже существует.',
-        },
-        verbose_name='Имя пользователя'
-    )
+    # username = models.CharField(
+    #     max_length=150,
+    #     unique=True,
+    #     help_text=('Обязательное поле. 150 символов или меньше.',
+    #                'Буквы, цифры и @/./+/-/_.'),
+    #     error_messages={
+    #         'unique': 'Пользователь с таким username уже существует.',
+    #     },
+    #     verbose_name='Имя пользователя'
+    # )
     email = models.EmailField(
         unique=True,
         error_messages={
