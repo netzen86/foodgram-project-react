@@ -211,7 +211,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return user.cart.filter(id=obj.id).exists()
 
 
-class RecipeSerializerWrite(RecipeSerializer):
+class RecipeCreateSerializer(RecipeSerializer):
     """Сериализатор рецепт для записи."""
 
     class Meta:
