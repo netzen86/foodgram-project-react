@@ -1,5 +1,4 @@
 from rest_framework import permissions
-from rest_framework.views import exceptions
 
 
 class IsAdminOrAuthorOrReadOnly(permissions.BasePermission):
@@ -13,10 +12,10 @@ class IsAdminOrAuthorOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        return request.method in ("PATCH", "DELETE") and (
+        return request.method in ('PATCH', 'DELETE') and (
             request.user
             and (
-                (request.user.role in ("admin",) or request.user.is_staff)
+                (request.user.role in ('admin',) or request.user.is_staff)
                 or obj.author == request.user
             )
         )

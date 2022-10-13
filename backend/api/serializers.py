@@ -16,6 +16,7 @@ from rest_framework import serializers
 
 
 class Base64ImageField(serializers.ImageField):
+    """Преобразованние текста в файл картинки"""
     def to_internal_value(self, data):
         if isinstance(data, str) and data.startswith('data:image'):
             format, imgstr = data.split(';base64,')
@@ -25,7 +26,7 @@ class Base64ImageField(serializers.ImageField):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Сериализатор управления пользователем."""
+    """Сериализатор пользователя."""
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -47,6 +48,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
+    """Сериализатор создания пользователя."""
+
     class Meta:
         model = User
         fields = (
@@ -68,6 +71,48 @@ class UserCreateSerializer(serializers.ModelSerializer):
     def to_representation(self, obj: User):
         self.fields.pop('password')
         return super().to_representation(obj)
+
+
+class UserSubscribedSerializer(UserSerializer):
+    """Сериализатор подписки на пользователя."""
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = (
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'password',
+            "recipes",
+            "is_subscribed",
+            "recipes_count",
+        )
+
+    def get_recipes(self, obj: User) -> Dict:
+        recipes_limit = int(
+            self.context.get("request").GET.get("recipes_limit", default=0)
+        )
+        if recipes_limit > 0:
+            recipes = obj.recipes.all()[:recipes_limit]
+        else:
+            recipes = obj.recipes.all()
+        serializer_class = getattr(
+            importlib.import_module("food.serializers"),
+            "RecipeCompactSerializer",
+        )
+        serializer = serializer_class(
+            many=True,
+            instance=recipes,
+        )
+        return serializer.data
+
+    @staticmethod
+    def get_recipes_count(obj: User) -> int:
+        return obj.recipes.aggregate(Count("id"))["id__count"]
 
 
 class RecipeCompactSerializer(serializers.ModelSerializer):
@@ -118,6 +163,9 @@ class SubscribedUserSerializer(UserSerializer):
     @staticmethod
     def get_recipes_count(obj: User) -> int:
         return obj.recipes.aggregate(Count('id'))['id__count']
+
+
+
 
 
 class IngredientsSerializer(serializers.ModelSerializer):

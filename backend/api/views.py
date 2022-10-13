@@ -1,34 +1,168 @@
-from json import dumps
+import io
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import send_mail
-# from django.db.models import Avg
+from django.db import models
+from django.http import FileResponse
 from django.shortcuts import get_object_or_404
-# from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, status, viewsets
-# from rest_framework.decorators import action, api_view, permission_classes
-from rest_framework.pagination import PageNumberPagination
-# LimitOffsetPagination,
-# from rest_framework.permissions import AllowAny, IsAuthenticated
-#from rest_framework.response import Response
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen import canvas
+from rest_framework.response import Response
+from rest_framework import filters, status, viewsets, permissions, views
 from foodgram.models import Ingredients, Recipe, Tags
-
-from backend import settings
-
-from .permissions import IsAdminOrAuthorOrReadOnly, AdminOrReadOnly, OnlyAdmin, OnlyAdminCanGiveRole
-from .serializers import (IngredientsSerializer, RecipeSerializer,
-                          RecipeCreateSerializer, TagsSerializer,
-                          UserSerializer)
+from .helpers import get_unique_recipe_ingredients
+from .mixins import ListModelViewSet, CreateDestroyModelViewSet
+from .pagination import PageNumberLimitPagination
+from .permissions import IsAdminOrAuthorOrReadOnly
+from .serializers import (IngredientsSerializer, RecipeCompactSerializer,
+                          RecipeCreateSerializer, RecipeSerializer,
+                          TagsSerializer, UserSubscribedSerializer)
 
 User = get_user_model()
 
 
-def get_usr(self):
-    return get_object_or_404(
-        User,
-        username=self.request.user,
-    )
+# def get_usr(self):
+#     return get_object_or_404(
+#         User,
+#         username=self.request.user,
+#     )
+
+
+class SubscriptionsViewSet(ListModelViewSet):
+    """Представление для подписок."""
+
+    serializer_class = UserSubscribedSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    pagination_class = PageNumberLimitPagination
+
+    def get_queryset(self):
+        return self.request.user.follower.all()
+
+
+class SwitchOnOffViewSet(CreateDestroyModelViewSet):
+    model_class = models.Model
+    router_pk = "id"
+    error_text_create = "Невозможно добавить запись"
+    error_text_destroy = "Невозможно удалить запись"
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self) -> models.QuerySet:
+        return self.model_class.objects.all()
+
+    def get_object(self) -> models.Model:
+        return get_object_or_404(self.model_class, pk=self.kwargs.get(self.router_pk))
+
+    def is_on(self) -> bool:
+        pass
+
+    @staticmethod
+    def error(text: str) -> Response:
+        return Response(
+            {
+                "errors": text,
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    def create(self, request, *args, **kwargs):
+        if self.is_on():
+            return self.error(self.error_text_create)
+        obj = self.get_object()
+        serializer = self.get_serializer(instance=obj)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED,
+            headers=headers,
+        )
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        if not self.is_on():
+            return self.error(self.error_text_destroy)
+        return super().destroy(request, *args, **kwargs)
+
+
+class RecipeFavoriteViewSet(SwitchOnOffViewSet):
+    """Сериализатор для добавления в избранное"""
+
+    model_class = Recipe
+    serializer_class = RecipeCompactSerializer
+    router_pk = "recipe_id"
+    error_text_create = "Рецепт уже добавлен в список избранное"
+    error_text_destroy = "Рецепта нет в списке избранного"
+
+    def is_on(self) -> bool:
+        recipe = self.get_object()
+        return self.request.user.favorite.filter(id=recipe.id).exists()
+
+    def perform_create(self, serializer: RecipeCompactSerializer):
+        recipe = self.get_object()
+        self.request.user.favorite.add(recipe)
+        self.request.user.save()
+
+    def perform_destroy(self, instance: Recipe):
+        self.request.user.favorite.remove(instance)
+        self.request.user.save()
+
+
+class RecipeCartViewSet(SwitchOnOffViewSet):
+    """Сериализатор для добавления в список покупок"""
+
+    model_class = Recipe
+    serializer_class = RecipeCompactSerializer
+    router_pk = "recipe_id"
+    error_text_create = "Рецепт уже добавлен список покупок"
+    error_text_destroy = "Рецепта нет в списке покупок"
+
+    def is_on(self) -> bool:
+        recipe = self.get_object()
+
+        return self.request.user.cart.filter(id=recipe.id).exists()
+
+    def perform_create(self, serializer: RecipeCompactSerializer):
+        recipe = self.get_object()
+
+        self.request.user.cart.add(recipe)
+        self.request.user.save()
+
+    def perform_destroy(self, instance: Recipe):
+        self.request.user.cart.remove(instance)
+        self.request.user.save()
+
+
+class SubscribeViewSet(SwitchOnOffViewSet):
+    """Представление для подписки"""
+
+    model_class = User
+    serializer_class = UserSubscribedSerializer
+    router_pk = "user_id"
+    error_text_create = "Подписка уже существует"
+    error_text_destroy = "Подписки не существует"
+
+    def is_on(self) -> bool:
+        user = self.get_object()
+        return self.request.user.follower.filter(id=user.id).exists()
+
+    def create(self, request, *args, **kwargs):
+        user = self.get_object()
+        if self.request.user.id == user.id:
+            return self.error("Невозможно подписаться на самого себя")
+        return super().create(request, *args, **kwargs)
+
+    def perform_create(self, serializer: UserSubscribedSerializer):
+        user = self.get_object()
+
+        self.request.user.follower.add(user)
+        self.request.user.save()
+
+    def perform_destroy(self, instance: User):
+        self.request.user.follower.remove(instance)
+        self.request.user.save()
 
 
 class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
@@ -73,3 +207,48 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ):
             return RecipeCreateSerializer
         return RecipeSerializer
+
+
+class SaveCartView(views.APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    font_path = "./static/fonts/JetBrainsMono-Medium.ttf"
+    filename = "file.pdf"
+
+    def get_text_lines(self):
+        pass
+
+    def get(self, request):
+        buffer = io.BytesIO()
+        pdfmetrics.registerFont(TTFont("Font", self.font_path))
+        page = canvas.Canvas(buffer, pagesize=A4)
+        page.setFont("Font", 14)
+        text = page.beginText()
+        text.setTextOrigin(80, 750)
+        for text_line in self.get_text_lines():
+            text.textLine(text=text_line)
+        page.drawText(text)
+        page.showPage()
+        page.save()
+        buffer.seek(0)
+        return FileResponse(
+            buffer,
+            as_attachment=True,
+            filename=self.filename,
+        )
+
+
+class RecipeCartDownloadView(SaveCartView):
+    filename = "Список покупок.pdf"
+
+    def get_text_lines(self):
+        recipes = self.request.user.cart.all()
+        unique_recipe_ingredients = get_unique_recipe_ingredients(recipes)
+        text_lines = []
+
+        for ingredient in unique_recipe_ingredients.values():
+            text_lines.append(
+                f"{ingredient['name']} ({ingredient['unit']}) "
+                f"— {ingredient['amount']}"
+            )
+
+        return text_lines
