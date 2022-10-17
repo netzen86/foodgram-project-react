@@ -10,23 +10,18 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from rest_framework.response import Response
 from rest_framework import filters, status, viewsets, permissions, views
-from foodgram.models import Ingredients, Recipe, Tags
-from .helpers import get_unique_recipe_ingredients
-from .mixins import ListModelViewSet, CreateDestroyModelViewSet
+from django_filters.rest_framework import DjangoFilterBackend
 from .pagination import PageNumberLimitPagination
+from .mixins import ListModelViewSet, CreateDestroyModelViewSet
+from .filters import IngredientFilter, RecipeFilter
+from .helpers import get_unique_recipe_ingredients
+from foodgram.models import Ingredients, Recipe, Tags
 from .permissions import IsAdminOrAuthorOrReadOnly
 from .serializers import (IngredientsSerializer, RecipeCompactSerializer,
                           RecipeCreateSerializer, RecipeSerializer,
                           TagsSerializer, UserSubscribedSerializer)
 
 User = get_user_model()
-
-
-# def get_usr(self):
-#     return get_object_or_404(
-#         User,
-#         username=self.request.user,
-#     )
 
 
 class SubscriptionsViewSet(ListModelViewSet):
@@ -51,7 +46,10 @@ class SwitchOnOffViewSet(CreateDestroyModelViewSet):
         return self.model_class.objects.all()
 
     def get_object(self) -> models.Model:
-        return get_object_or_404(self.model_class, pk=self.kwargs.get(self.router_pk))
+        return get_object_or_404(
+            self.model_class,
+            pk=self.kwargs.get(self.router_pk)
+        )
 
     def is_on(self) -> bool:
         pass
@@ -140,7 +138,7 @@ class SubscribeViewSet(SwitchOnOffViewSet):
 
     model_class = User
     serializer_class = UserSubscribedSerializer
-    router_pk = "user_id"
+    router_pk = 'user_id'
     error_text_create = "Подписка уже существует"
     error_text_destroy = "Подписки не существует"
 
@@ -171,9 +169,10 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredients.objects.all()
     serializer_class = IngredientsSerializer
     permission_classes = (IsAdminOrAuthorOrReadOnly,)
-    lookup_field = "id"
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ("name",)
+    # lookup_field = 'id'
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = IngredientFilter
+    # search_fields = ('name',)
     pagination_class = None
 
 
@@ -183,9 +182,9 @@ class TagsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tags.objects.all()
     serializer_class = TagsSerializer
     permission_classes = (IsAdminOrAuthorOrReadOnly,)
-    lookup_field = "id"
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ("name",)
+    # lookup_field = 'id'
+    # filter_backends = (filters.SearchFilter,)
+    # search_fields = ('name',)
     pagination_class = None
 
 
@@ -195,8 +194,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     permission_classes = (IsAdminOrAuthorOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = RecipeFilter
     lookup_field = "id"
-    filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
 
     def get_serializer_class(self):
