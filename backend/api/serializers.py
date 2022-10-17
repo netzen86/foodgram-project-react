@@ -73,10 +73,18 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return super().to_representation(obj)
 
 
+class RecipeCompactSerializer(serializers.ModelSerializer):
+    """Сериализатор рецепта для пользователя."""
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
+
+
 class UserSubscribedSerializer(UserSerializer):
     """Сериализатор подписки на пользователя."""
-    recipes = serializers.SerializerMethodField()
-    recipes_count = serializers.SerializerMethodField()
+    recipes = serializers.SerializerMethodField(read_only=True)
+    recipes_count = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
@@ -87,85 +95,39 @@ class UserSubscribedSerializer(UserSerializer):
             'first_name',
             'last_name',
             'password',
-            "recipes",
-            "is_subscribed",
-            "recipes_count",
-        )
-
-    def get_recipes(self, obj: User) -> Dict:
-        recipes_limit = int(
-            self.context.get("request").GET.get("recipes_limit", default=0)
-        )
-        if recipes_limit > 0:
-            recipes = obj.recipes.all()[:recipes_limit]
-        else:
-            recipes = obj.recipes.all()
-        serializer_class = getattr(
-            importlib.import_module("food.serializers"),
-            "RecipeCompactSerializer",
-        )
-        serializer = serializer_class(
-            many=True,
-            instance=recipes,
-        )
-        return serializer.data
-
-    @staticmethod
-    def get_recipes_count(obj: User) -> int:
-        return obj.recipes.aggregate(Count("id"))["id__count"]
-
-
-class RecipeCompactSerializer(serializers.ModelSerializer):
-    """Сериализатор рецепта для пользователя."""
-
-    class Meta:
-        model = Recipe
-        fields = ('id', 'name', 'image', 'cooking_time')
-
-
-class SubscribedUserSerializer(UserSerializer):
-    """Сериализатор управления пользователем."""
-
-    class Meta:
-        model = User
-        fields = (
-            'email',
-            'first_name',
-            'id',
-            'is_subscribed',
-            'last_name',
             'recipes',
             'recipes_count',
-            'username',
+            'is_subscribed',
         )
 
-    recipes = serializers.SerializerMethodField()
-    recipes_count = serializers.SerializerMethodField()
-
     def get_recipes(self, obj: User) -> Dict:
+        print(f"!!!{obj}!!!")
         recipes_limit = int(
             self.context.get('request').GET.get('recipes_limit', default=0)
         )
+        print(f"!!!{recipes_limit}!!!")
         if recipes_limit > 0:
             recipes = obj.recipes.all()[:recipes_limit]
         else:
             recipes = obj.recipes.all()
-        serializer_class = getattr(
-            importlib.import_module('food.serializers'),
-            'RecipeCompactSerializer',
-        )
+        serializer_class = RecipeCompactSerializer
         serializer = serializer_class(
             many=True,
             instance=recipes,
         )
         return serializer.data
+
+    # def get_recipes(self, obj):
+    #     request = self.context.get('request')
+    #     recipes = obj.recipes.all()
+    #     recipes_limit = request.query_params.get('recipes_limit')
+    #     if recipes_limit:
+    #         recipes = recipes[:int(recipes_limit)]
+    #     return RecipeCompactSerializer(recipes, many=True).data
 
     @staticmethod
     def get_recipes_count(obj: User) -> int:
         return obj.recipes.aggregate(Count('id'))['id__count']
-
-
-
 
 
 class IngredientsSerializer(serializers.ModelSerializer):
