@@ -7,12 +7,12 @@ def get_unique_recipe_ingredients(recipes):
     result = {}
 
     for recipe in recipes:
-        for IngredientsRecipe in recipe.IngredientsRecipe.all():
+        for ingredients_recipe in recipe.ingredients_recipe.all():
             ingredient = {
-                "id": IngredientsRecipe.ingredient.id,
-                "name": IngredientsRecipe.ingredient.name,
-                "unit": IngredientsRecipe.ingredient.measurement_unit,
-                "amount": IngredientsRecipe.amount,
+                "id": ingredients_recipe.ingredient.id,
+                "name": ingredients_recipe.ingredient.name,
+                "unit": ingredients_recipe.ingredient.measurement_unit,
+                "amount": ingredients_recipe.amount,
             }
 
             if not result.get(f"id_{ingredient['id']}"):
