@@ -100,30 +100,13 @@ class UserSubscribedSerializer(UserSerializer):
             'is_subscribed',
         )
 
-    def get_recipes(self, obj: User) -> Dict:
-        print(f"!!!{obj}!!!")
-        recipes_limit = int(
-            self.context.get('request').GET.get('recipes_limit', default=0)
-        )
-        print(f"!!!{recipes_limit}!!!")
-        if recipes_limit > 0:
-            recipes = obj.recipes.all()[:recipes_limit]
-        else:
-            recipes = obj.recipes.all()
-        serializer_class = RecipeCompactSerializer
-        serializer = serializer_class(
-            many=True,
-            instance=recipes,
-        )
-        return serializer.data
-
-    # def get_recipes(self, obj):
-    #     request = self.context.get('request')
-    #     recipes = obj.recipes.all()
-    #     recipes_limit = request.query_params.get('recipes_limit')
-    #     if recipes_limit:
-    #         recipes = recipes[:int(recipes_limit)]
-    #     return RecipeCompactSerializer(recipes, many=True).data
+    def get_recipes(self, obj):
+        request = self.context.get('request')
+        recipes = obj.recipes.all()
+        recipes_limit = request.query_params.get('recipes_limit')
+        if recipes_limit:
+            recipes = recipes[:int(recipes_limit)]
+        return RecipeCompactSerializer(recipes, many=True).data
 
     @staticmethod
     def get_recipes_count(obj: User) -> int:

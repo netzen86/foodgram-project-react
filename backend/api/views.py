@@ -1,5 +1,5 @@
 import io
-
+from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.http import FileResponse
@@ -238,7 +238,7 @@ class SaveCartView(views.APIView):
 
 
 class RecipeCartDownloadView(SaveCartView):
-    filename = "Список покупок.pdf"
+    filename = f'Список покупок {datetime.date(datetime.now())}.pdf'
 
     def get_text_lines(self):
         recipes = self.request.user.cart.all()
