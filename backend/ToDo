@@ -1,4 +1,0 @@
-Ошибка при создании рецепта -- выполнено
-infra-backend-1   |   File "/app/api/permissions.py", line 14, in has_permission
-infra-backend-1   |     if request.user.is_superuser or request.user.is_admin:
-infra-backend-1   | AttributeError: 'CustomUser' object has no attribute 'is_admin'

@@ -7,6 +7,12 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
+  db:
+    image: postgres:13.0-alpine
+    volumes:
+      - db_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env
   backend:
     build:
       context: ../backend
@@ -16,7 +22,9 @@ services:
       - static_data_drf:/app/static/rest_framework/
       - media_data:/app/media/  
     ports:
-     - "8000:8000"
+      - "8000:8000"
+    env_file:
+      - ./.env
   nginx:
     image: nginx:1.19.3
     ports:
@@ -30,7 +38,7 @@ services:
       - static_data_drf:/usr/share/nginx/html/static/rest_framework/
 
 volumes:
-  # db_data:
+  db_data:
   static_data_admin:
   static_data_drf:
   media_data:

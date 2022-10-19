@@ -5,7 +5,7 @@ from django.conf import settings as set
 from django.core.management.base import BaseCommand
 from foodgram.models import Ingredients
 
-DATA_DIR = os.path.join(set.BASE_DIR, '..', "data")
+DATA_DIR = os.path.join(set.BASE_DIR, "data")
 
 
 class Command(BaseCommand):
