@@ -1,18 +1,11 @@
-# from datetime import datetime
 import base64
+
 from django.core.files.base import ContentFile
-from djoser import serializers
-from django.contrib.auth import get_user_model
 from django.db.models import Count
-import importlib
-from typing import Dict
-# from rest_framework.exceptions import ValidationError
-# from rest_framework.generics import get_object_or_404
-from rest_framework.relations import SlugRelatedField, ManyRelatedField
-# from rest_framework.validators import UniqueTogetherValidator
+from djoser import serializers
 from foodgram.models import Ingredients, IngredientsRecipe, Recipe, Tags
-from users.models import CustomUser as User
 from rest_framework import serializers
+from users.models import CustomUser as User
 
 
 class Base64ImageField(serializers.ImageField):

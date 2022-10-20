@@ -14,7 +14,6 @@ class Ingredients(models.Model):
     )
 
     class Meta:
-        # ordering = ('id',)
         verbose_name = 'Ингридиент'
         verbose_name_plural = 'Ингридиенты'
 
@@ -62,7 +61,7 @@ class Recipe(models.Model):
     image = models.ImageField(
         upload_to='recipes/',
         verbose_name='Название'
-        )
+    )
     text = models.TextField(
         verbose_name='Описание'
     )

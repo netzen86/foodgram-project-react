@@ -1,8 +1,6 @@
-from foodgram.models import Ingredients, Recipe
 from django.db.models import IntegerField, Value
-
-from django_filters import (BaseInFilter, CharFilter,
-                            FilterSet, NumberFilter,)
+from django_filters import BaseInFilter, CharFilter, FilterSet, NumberFilter
+from foodgram.models import Ingredients, Recipe
 
 
 class CharInFilter(BaseInFilter, CharFilter):

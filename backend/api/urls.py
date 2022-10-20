@@ -1,29 +1,16 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import (IngredientsViewSet, RecipeCartViewSet,
-                    RecipeFavoriteViewSet, RecipeCartDownloadView,
-                    RecipeViewSet, SubscribeViewSet,
-                    SubscriptionsViewSet, TagsViewSet)
+from .views import (IngredientsViewSet, RecipeCartDownloadView,
+                    RecipeCartViewSet, RecipeFavoriteViewSet, RecipeViewSet,
+                    SubscribeViewSet, SubscriptionsViewSet, TagsViewSet)
 
 app_name = "api"
 
 router = DefaultRouter()
-router.register(
-    r"ingredients",
-    IngredientsViewSet,
-    basename="ingredients"
-)
-router.register(
-    r"tags",
-    TagsViewSet,
-    basename="tags"
-)
-router.register(
-    r"recipes",
-    RecipeViewSet,
-    basename="recipes"
-)
+router.register(r"ingredients", IngredientsViewSet, basename="ingredients")
+router.register(r"tags", TagsViewSet, basename="tags")
+router.register(r"recipes", RecipeViewSet, basename="recipes")
 router.register(
     r"recipes/(?P<recipe_id>\d+)/favorite",
     RecipeFavoriteViewSet,
