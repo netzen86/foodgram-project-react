@@ -1,10 +1,11 @@
 FROM python:3.7-slim
 
 WORKDIR /app
-
+RUN mkdir data
+ 
 # Копируем файлы проекта в контейнер.
-COPY . .
-
+COPY backend/. .
+COPY data/ /app/data
 # Выполняем установку зависимостей внутри контейнера.
 # RUN apt-get update \
 #    && apt-get -y install libpq-dev gcc

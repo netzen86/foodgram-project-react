@@ -15,8 +15,8 @@ services:
       - ./.env
   backend:
     build:
-      context: ../backend
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: backend/Dockerfile
     volumes:
       - static_data_admin:/app/static/admin/
       - static_data_drf:/app/static/rest_framework/
