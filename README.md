@@ -15,34 +15,40 @@
 
 * [http://foodgram.netzen.dev/api/docs/](http://foodgram.netzen.dev/api/docs/)
 
-## Установка
+# Технологии
 
-1. `git clone git@github.com:netzen86/foodgram-project-react.git`
+Django 2.2.16
+Django REST framework 3.12.4
+Gunicorn 20.0.4
+Nginx 1.21.3
+Postgres 13.0
+Docker-compose 1.29.2
+Github actions
 
-2. Заполнить файл `infra/.env` (пример в `infra/.env.example`)
+## Запуск приложения
 
+Скопировать файлы на сервер в домашний каталог
 ```
-# указываем, что работаем с postgresql
-DB_ENGINE=django.db.backends.postgresql
-
-# имя базы данных
-DB_NAME=
-
-# логин для подключения к базе данных
-POSTGRES_USER=
-
-# пароль для подключения к БД
-POSTGRES_PASSWORD=
-
-# название сервиса (контейнера)
-DB_HOST=db
-
-# порт для подключения к БД
-DB_PORT=5432
-
-# django secret key
-SECRET_KEY=
-
+docker-compose.yaml и 
+./nginx/default.conf
+```
+Запушить проект на github 
+```
+git add .
+git commit -m 'коментарий'
+git push
+```
+Для выполнения миграции выполните на сервере команду
+```
+docker-compose exec web python manage.py migrate
+````
+Для создания пользователя с правами администратора выполните на сервере команду
+```
+docker-compose exec web python manage.py createsuperuser
+```
+Собрать статические файлы из нескольких приложений в один каталог
+```
+docker-compose exec web python manage.py collectstatic --no-input 
 ```
 
 ### Docker
