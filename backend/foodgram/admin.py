@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.db.models import Count
+from django.utils.safestring import mark_safe
 
 from .models import Ingredients, IngredientsRecipe, Recipe, Tags, TagsRecipe
 
@@ -26,34 +27,25 @@ class RecipeAdmin(admin.ModelAdmin):
         'id',
         'author',
         'name',
-        'image',
+        'preview_image',
         'text',
         'cooking_time',
-        'is_favorited',
-        'is_in_shopping_cart',
-        'ingredients',
-        'tags',
     )
     search_fields = ('name', 'text')
     list_filter = ('name', 'author', 'tags',)
     empty_value_display = '-пусто-'
-    readonly_fields = ('favorited',)
+    readonly_fields = ('favorited', 'preview_image',)
 
-    @staticmethod
-    def amount_favorites(obj):
-        return obj.favorites.count()
+    def favorited(self, instance: Recipe) -> int:
+        return instance.users_favorited.aggregate(Count('id'))['id__count']
 
-    amount_favorites.short_description = (
-        'Общее число добавлений рецепта в избранное'
-    )
+    favorited.short_description = 'Общее число добавлений рецепта в избранное'
 
-    @staticmethod
-    def amount_tags(obj):
-        return '\n'.join([i[0] for i in obj.tags.values_list('name')])
+    def preview_image(self, obj):
+        if obj.image:
+            return mark_safe(f'<img src="{obj.image.url}" width=100>')
 
-    @staticmethod
-    def amount_ingredients(obj):
-        return '\n'.join([i[0] for i in obj.ingredients.values_list('name')])
+    preview_image.short_description = "Миниатюра"
 
 
 class TagsAdmin(admin.ModelAdmin):
