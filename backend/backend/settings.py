@@ -70,12 +70,6 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
 
 DATABASES = {
     'default': {
@@ -132,7 +126,18 @@ DJOSER = {
         'user_list': ['rest_framework.permissions.IsAuthenticated'],
     },
     'HIDE_USERS': False,
+    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': '#/activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': False,
 }
+
+
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
+
+DOMAIN = 'foodgram.netzen.dev'
+CONFIRM_EMAIL = f'pass_confirm_yamdb@{DOMAIN}'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
