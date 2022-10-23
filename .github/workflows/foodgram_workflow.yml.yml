@@ -40,6 +40,5 @@ jobs:
         uses: docker/build-push-action@v2 
         with:
           context: .
-          dockerfile: backend/Dockerfile
           push: true
           tags: netzen86/foodgram:latest
