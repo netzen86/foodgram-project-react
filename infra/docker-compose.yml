@@ -15,14 +15,16 @@ services:
       - ./.env
   backend:
     build:
-      context: ../
-      dockerfile: backend/Dockerfile
+    image: netzen86/api_yamdb:latest
+    restart: always
     volumes:
       - static_data_admin:/app/static/admin/
       - static_data_drf:/app/static/rest_framework/
       - media_data:/app/media/  
     ports:
       - "8000:8000"
+    depends_on:
+      - db
     env_file:
       - ./.env
   nginx:
@@ -36,6 +38,8 @@ services:
       - media_data:/usr/share/nginx/html/media/
       - static_data_admin:/usr/share/nginx/html/static/admin/
       - static_data_drf:/usr/share/nginx/html/static/rest_framework/
+    depends_on:
+      - web
 
 volumes:
   db_data:
