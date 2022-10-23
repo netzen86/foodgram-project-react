@@ -50,7 +50,7 @@ SECRET_KEY=
 ```bash
 docker-compose -f ./infra/docker-compose.yml up -d
 
-# docker build . -f ./backend/Dockerfile
+docker build . -f ./backend/Dockerfile
 
 docker-compose -f ./infra/docker-compose.yml exec web python manage.py fill_db
 docker-compose -f ./infra/docker-compose.yml exec web python manage.py createsuperuser
