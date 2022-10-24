@@ -51,7 +51,20 @@ docker-compose exec web python manage.py createsuperuser
 docker-compose exec web python manage.py collectstatic --no-input 
 ```
 
-### Docker
+# Docker
+
+'''build image
+
+docker login -u netzen86
+docker build -f backend/Dockerfile -t netzen86/foodgram-back:v1 .
+docker push netzen86/foodgram-back:v1 
+
+cd frontend/
+docker build . -t netzen86/foodgram-front:v1
+docker push netzen86/foodgram-front:v1
+'''
+
+
 
 ```bash
 docker-compose -f ./infra/docker-compose.yml up -d
