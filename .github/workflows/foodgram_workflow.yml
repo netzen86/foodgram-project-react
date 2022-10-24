@@ -42,7 +42,7 @@ jobs:
           context: .
           file: backend/Dockerfile
           push: true
-          tags: netzen86/foodgram:latest
+          tags: netzen86/foodgram-back:latest
 
   deploy:
     runs-on: ubuntu-latest
