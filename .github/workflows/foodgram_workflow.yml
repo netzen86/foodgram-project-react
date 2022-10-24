@@ -70,7 +70,7 @@ jobs:
   post_deploy:
     runs-on: ubuntu-latest
     needs: deploy
-      steps:
+    steps:
       - name: executing remote ssh commands to post_deploy
         uses: appleboy/ssh-action@master
         with:
@@ -82,7 +82,7 @@ jobs:
             sudo docker-compose exec backend python manage.py fill_db    
   send_message:
     runs-on: ubuntu-latest
-    needs: deploy
+    needs: post_deploy
     steps:
     - name: send message
       uses: appleboy/telegram-action@master
