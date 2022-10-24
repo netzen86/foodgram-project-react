@@ -5,6 +5,7 @@ services:
     image: postgres:13.0-alpine
     volumes:
       - db_data:/var/lib/postgresql/data/
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     env_file:
       - ./.env
   frontend:
