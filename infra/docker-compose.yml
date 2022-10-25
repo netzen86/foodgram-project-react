@@ -3,10 +3,14 @@ services:
 
   db:
     image: postgres:13.0-alpine
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_USER: ${POSTGRES_USER:-user}
+      POSTGRES_DB: ${POSTGRES_DB:-db}
     volumes:
       - db_data:/var/lib/postgresql/data/
     env_file:
-      - .env
+      - ./.env
   frontend:
     image: netzen86/foodgram-front:v1
     volumes:
@@ -23,7 +27,7 @@ services:
     depends_on:
       - db
     env_file:
-      - .env
+      - ./.env
   nginx:
     image: nginx:1.19.3
     ports:
