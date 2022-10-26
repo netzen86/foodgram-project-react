@@ -85,8 +85,15 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             sudo docker-compose exec -T backend python manage.py migrate
+            sudo docker-compose exec -T backend python manage.py createadmin
             sudo docker-compose exec -T backend python manage.py fill_db
-            sudo docker-compose exec -T backend python manage.py collectstatic --no-input 
+            sudo docker-compose exec -T backend python manage.py collectstatic --no-input
+      - name: copy file
+        uses: canastro/copy-file-action@master
+        with:
+          source: "docs/*"
+          target: "docs/"
+
 
   send_message:
     runs-on: ubuntu-latest
