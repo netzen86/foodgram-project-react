@@ -13,9 +13,9 @@ class Command(BaseCommand):
                 last_name=os.getenv('BE_LNAME', default='Ivanovich'),
                 email=os.getenv('BE_EMAIL', default='admin@yandex.ru'),
                 password=os.getenv('BE_PASSWORD', default='p@s$w0rd777'),
+                is_subscribed=False,
+                role='admin'
             )
-            admin.is_subscribed = False
-            admin.role = admin
             admin.save()
         else:
             print('Админский акаунт уже создан')
