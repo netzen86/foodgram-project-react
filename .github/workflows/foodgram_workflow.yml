@@ -80,6 +80,8 @@ jobs:
           script: |
             sudo docker-compose exec -T backend python manage.py migrate
             sudo docker-compose exec -T backend python manage.py fill_db
+            sudo docker-compose exec -T web python manage.py collectstatic --no-input 
+
   send_message:
     runs-on: ubuntu-latest
     needs: post_deploy
