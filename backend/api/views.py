@@ -221,6 +221,7 @@ class SaveCartView(views.APIView):
         page.setFont("Font", 14)
         text = page.beginText()
         text.setTextOrigin(80, 750)
+        text.textLine(f'СПИСОК ПОКУПОК {datetime.date(datetime.now())}.')
         for text_line in self.get_text_lines():
             text.textLine(text=text_line)
         page.drawText(text)
