@@ -49,11 +49,12 @@ jobs:
     needs: build_and_push_to_docker_hub
     steps:
       - name: Run a multi-line script
-      - uses: actions/checkout@v2
+        uses: actions/checkout@v2
         run: |
           mkdir ../build
           cp -TR ./infra/docker-compose.yml. ../build
           tar -cvf files.tar ../build/
+          pwd 
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
         with:
