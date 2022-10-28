@@ -86,7 +86,7 @@ jobs:
             echo BE_EMAIL=${{ secrets.BE_EMAIL }} >> .env
             echo BE_PASSWORD=${{ secrets.BE_PASSWORD }} >> .env
             echo MEDIA=${{ secrets.MEDIA }} >> .env
-            sudo docker-compose up -d
+            # sudo docker-compose up -d
 
   post_deploy:
     runs-on: ubuntu-latest
@@ -100,6 +100,7 @@ jobs:
           key: ${{ secrets.SH_KEY_SRV }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
+            sudo docker-compose up -d
             sudo docker-compose exec -T backend python manage.py migrate
             sudo docker-compose exec -T backend python manage.py createadmin
             sudo docker-compose exec -T backend python manage.py fill_db
