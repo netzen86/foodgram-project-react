@@ -74,6 +74,7 @@ jobs:
             sudo docker-compose stop
             sudo docker-compose rm -f backend
             sudo docker images -a | grep "back" | awk '{print $3}' | xargs sudo docker rmi
+            sudo docker-compose pull
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} > .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
             echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
@@ -86,7 +87,6 @@ jobs:
             echo BE_EMAIL=${{ secrets.BE_EMAIL }} >> .env
             echo BE_PASSWORD=${{ secrets.BE_PASSWORD }} >> .env
             echo MEDIA=${{ secrets.MEDIA }} >> .env
-            # sudo docker-compose up -d
 
   post_deploy:
     runs-on: ubuntu-latest
