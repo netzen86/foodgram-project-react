@@ -48,6 +48,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: build_and_push_to_docker_hub
     steps:
+      - name: Run a multi-line script
+      - uses: actions/checkout@v2
+        run: |
+          mkdir ../build
+          cp -TR ./infra/docker-compose.yml. ../build
+          tar -cvf files.tar ../build/
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
         with:
@@ -55,7 +61,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SH_KEY_SRV }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          source: "infra/docker-compose.yml"
+          source: "files.tar"
           target: "/home/netzen"
       - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
