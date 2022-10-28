@@ -56,7 +56,7 @@ jobs:
           key: ${{ secrets.SH_KEY_SRV }}
           passphrase: ${{ secrets.PASSPHRASE }}
           source: "infra/*"
-          target: "."
+          target: "~/."
       - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
