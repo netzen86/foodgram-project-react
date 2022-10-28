@@ -62,7 +62,7 @@ jobs:
           key: ${{ secrets.SH_KEY_SRV }}
           passphrase: ${{ secrets.PASSPHRASE }}
           source: "files.tar"
-          target: "/home/netzen"
+          target: "."
       - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
