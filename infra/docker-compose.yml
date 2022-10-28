@@ -41,8 +41,8 @@ services:
       - media_data:/usr/share/nginx/html/media/
       - static_data_admin:/usr/share/nginx/html/static/admin/
       - static_data_drf:/usr/share/nginx/html/static/rest_framework/
-    depends_on:
-      - frontend
+    # depends_on:
+    #   - frontend
 
 volumes:
   db_data:
