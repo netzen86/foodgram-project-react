@@ -53,7 +53,7 @@ jobs:
         run: |
           mkdir ../copy_file
           cp infra/docker-compose.yml ../copy_file
-          tar -cvf files.tar ../copy_file
+          tar -cvf files.tar ../copy_file/*
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
         with:
@@ -88,7 +88,7 @@ jobs:
             echo BE_PASSWORD=${{ secrets.BE_PASSWORD }} >> .env
             echo MEDIA=${{ secrets.MEDIA }} >> .env
             rm docker-compose.yml
-            tar -xzvf files.tar --strip-components=1
+            tar -xvf files.tar
             rm -f files.tar
 
   run_app:
