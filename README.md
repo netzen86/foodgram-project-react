@@ -37,8 +37,7 @@ git push
 
 # Build docker image
 
-'''
-
+```
 docker login -u netzen86
 docker build -f backend/Dockerfile -t netzen86/foodgram-back:v1 .
 docker push netzen86/foodgram-back:v1 
@@ -46,8 +45,7 @@ docker push netzen86/foodgram-back:v1
 cd frontend/
 docker build . -t netzen86/foodgram-front:v2
 docker push netzen86/foodgram-front:v2
-'''
-
+```
 # Запуск приложения локально
 ```
 docker-compose -f ./infra/docker-compose.yml up -d
@@ -56,5 +54,4 @@ docker-compose -f ./infra/docker-compose.yml exec backend python manage.py fill_
 docker-compose -f ./infra/docker-compose.yml exec backend python manage.py createsuperuser
 
 ```
-
-[Docker Hub](https://hub.docker.com/repository/docker/nezen86/foodgram)
+[Docker Hub](https://hub.docker.com/repository/docker/netzen86/foodgram-back)
