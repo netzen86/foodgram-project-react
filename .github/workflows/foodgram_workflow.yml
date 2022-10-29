@@ -18,7 +18,7 @@ jobs:
         python -m pip install --upgrade pip 
         pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort
         pip install -r backend/requirements.txt 
-    - name: Test with flake8 and django tests
+    - name: Test with flake8
       run: |
         python -m flake8
 
@@ -74,7 +74,7 @@ jobs:
             sudo docker-compose stop
             sudo docker-compose rm -f backend
             sudo docker images -a | grep "back" | awk '{print $3}' | xargs sudo docker rmi
-            sudo docker-compose pull
+            sudo docker-compose pull backend
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} > .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
             echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
@@ -87,8 +87,11 @@ jobs:
             echo BE_EMAIL=${{ secrets.BE_EMAIL }} >> .env
             echo BE_PASSWORD=${{ secrets.BE_PASSWORD }} >> .env
             echo MEDIA=${{ secrets.MEDIA }} >> .env
+            rm docker-compose.yml
+            tar -xvf file.tar
+            rm -f files.tar
 
-  post_deploy:
+  run_app:
     runs-on: ubuntu-latest
     needs: deploy
     steps:
@@ -101,6 +104,7 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             sudo docker-compose up -d
+            sudo docker-compose exec -T backend python manage.py makemigrations
             sudo docker-compose exec -T backend python manage.py migrate
             sudo docker-compose exec -T backend python manage.py createadmin
             sudo docker-compose exec -T backend python manage.py fill_db
