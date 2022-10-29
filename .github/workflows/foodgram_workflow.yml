@@ -103,7 +103,7 @@ jobs:
           key: ${{ secrets.SH_KEY_SRV }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
-            sudo docker-compose up
+            sudo docker-compose up -d
             sudo docker-compose exec -T backend python manage.py makemigrations
             sudo docker-compose exec -T backend python manage.py migrate
             sudo docker-compose exec -T backend python manage.py createadmin
