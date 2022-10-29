@@ -1,19 +1,16 @@
 ![foodgram_workflow](https://github.com/netzen86/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
-## Пример
+# Проект доступен по адресу
+* [http://foodgram.netzen.su](http://foodgram.netzen.su)
 
-* [http://foodgram.netzen.dev/](http://foodgram.netzen.dev/)
-
-  Логин: ivan@mail.ru
-
-  Пароль: p@s$w0rd777
-
-* [http://foodgram.netzen.dev/admin/](http://foodgram.netzen.dev/admin/)
+## Админка проекта
+* [http://foodgram.netzen.su/admin/](http://foodgram.netzen.ыг/admin/)
 
   Логин: admin
 
   Пароль: p@s$w0rd777
 
-* [http://foodgram.netzen.dev/api/docs/](http://foodgram.netzen.dev/api/docs/)
+## API проекта
+* [http://foodgram.netzen.su/api/docs/](http://foodgram.netzen.su/api/docs/)
 
 # Технологии
 
@@ -27,9 +24,8 @@ Github actions
 
 ## Запуск приложения
 
-Скопировать файлы на сервер в домашний каталог
-```
-docker-compose.yaml и 
+Скопировать файл конфигурации nginx на сервер в домашний каталог
+``` 
 ./nginx/default.conf
 ```
 Запушить проект на github 
@@ -38,47 +34,27 @@ git add .
 git commit -m 'коментарий'
 git push
 ```
-Для выполнения миграции выполните на сервере команду
-```
-docker-compose exec web python manage.py migrate
-````
-Для создания пользователя с правами администратора выполните на сервере команду
-```
-docker-compose exec web python manage.py createsuperuser
-```
-Собрать статические файлы из нескольких приложений в один каталог
-```
-docker-compose exec web python manage.py collectstatic --no-input 
-```
 
-# Docker
+# Build docker image
 
-'''build image
+'''
 
 docker login -u netzen86
 docker build -f backend/Dockerfile -t netzen86/foodgram-back:v1 .
 docker push netzen86/foodgram-back:v1 
 
 cd frontend/
-docker build . -t netzen86/foodgram-front:v1
-docker push netzen86/foodgram-front:v1
+docker build . -t netzen86/foodgram-front:v2
+docker push netzen86/foodgram-front:v2
 '''
 
-
-
-```bash
+# Запуск приложения локально
+```
 docker-compose -f ./infra/docker-compose.yml up -d
-
-docker build . -f ./backend/Dockerfile
-
-docker-compose -f ./infra/docker-compose.yml exec web python manage.py fill_db
-docker-compose -f ./infra/docker-compose.yml exec web python manage.py createsuperuser
+python3 ./backend/manage.py runserver 
+docker-compose -f ./infra/docker-compose.yml exec backend python manage.py fill_db
+docker-compose -f ./infra/docker-compose.yml exec backend python manage.py createsuperuser
 
 ```
 
 [Docker Hub](https://hub.docker.com/repository/docker/nezen86/foodgram)
-
-
-## API
-
-[http://food.gram/api/docs/](http://food.gram/api/docs/)
