@@ -48,10 +48,10 @@ docker push netzen86/foodgram-front:v2
 ```
 # Запуск приложения локально
 ```
-docker-compose -f ./infra/docker-compose.yml up -d
+docker-compose -f ./infra/docker-compose-local.yml up -d
 python3 ./backend/manage.py runserver 
-docker-compose -f ./infra/docker-compose.yml exec backend python manage.py fill_db
-docker-compose -f ./infra/docker-compose.yml exec backend python manage.py createsuperuser
+docker-compose -f ./infra/docker-compose-local.yml exec backend python manage.py fill_db
+docker-compose -f ./infra/docker-compose-local.yml exec backend python manage.py createsuperuser
 
 ```
 [Docker Hub](https://hub.docker.com/repository/docker/netzen86/foodgram-back)
