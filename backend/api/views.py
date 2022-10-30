@@ -45,7 +45,7 @@ class SwitchOnOffViewSet(CreateDestroyModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_object(self) -> models.Model:
-        queryset = self.get_queryset() 
+        queryset = self.get_queryset()
         return get_object_or_404(queryset, pk=self.router_pk)
         # return get_object_or_404(
         #     self.model_class,
