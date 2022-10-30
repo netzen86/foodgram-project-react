@@ -69,6 +69,10 @@ class CustomUser(AbstractUser):
     )
     REQUIRED_FIELDS = ['first_name', 'last_name', 'is_subscribed', 'email']
 
+    @property
+    def is_admin(self):
+        return self.role == "admin"
+
     class Meta:
         ordering = ('id',)
         verbose_name = 'Пользователь'

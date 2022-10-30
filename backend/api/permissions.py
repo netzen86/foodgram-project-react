@@ -6,16 +6,12 @@ class IsAdminOrAuthorOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        return request.user and request.user.is_authenticated
+        return request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        return request.method in ('PATCH', 'DELETE') and (
-            request.user
-            and (
-                (request.user.role in ('admin',) or request.user.is_staff)
-                or obj.author == request.user
-            )
+        return request.method in ('PATCH', 'PUT', 'DELETE') and (
+            request.user.is_admin or obj.author == request.user
         )

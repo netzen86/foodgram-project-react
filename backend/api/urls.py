@@ -5,36 +5,36 @@ from .views import (IngredientsViewSet, RecipeCartDownloadView,
                     RecipeCartViewSet, RecipeFavoriteViewSet, RecipeViewSet,
                     SubscribeViewSet, SubscriptionsViewSet, TagsViewSet)
 
-app_name = "api"
+app_name = 'api'
 
 router = DefaultRouter()
-router.register(r"ingredients", IngredientsViewSet, basename="ingredients")
-router.register(r"tags", TagsViewSet, basename="tags")
-router.register(r"recipes", RecipeViewSet, basename="recipes")
+router.register(r'ingredients', IngredientsViewSet, basename='ingredients')
+router.register(r'tags', TagsViewSet, basename='tags')
+router.register(r'recipes', RecipeViewSet, basename='recipes')
 router.register(
-    r"recipes/(?P<recipe_id>\d+)/favorite",
+    r'recipes/(?P<recipe_id>\d+)/favorite',
     RecipeFavoriteViewSet,
-    basename="recipe-favorite",
+    basename='recipe-favorite',
 )
 router.register(
-    r"recipes/(?P<recipe_id>\d+)/shopping_cart",
+    r'recipes/(?P<recipe_id>\d+)/shopping_cart',
     RecipeCartViewSet,
-    basename="recipe-cart",
+    basename='recipe-cart',
 )
 router.register(
-    r"users/(?P<user_id>\d+)/subscribe",
+    r'users/(?P<user_id>\d+)/subscribe',
     SubscribeViewSet,
-    basename="subscribe",
+    basename='subscribe',
 )
 router.register(
-    r"users/subscriptions",
+    r'users/subscriptions',
     SubscriptionsViewSet,
-    basename="subscriptions",
+    basename='subscriptions',
 )
 
 urlpatterns = [
-    path("recipes/download_shopping_cart/", RecipeCartDownloadView.as_view()),
-    path("auth/", include("djoser.urls.authtoken")),
-    path("", include(router.urls)),
-    path("", include("djoser.urls")),
+    path('recipes/download_shopping_cart/', RecipeCartDownloadView.as_view()),
+    path('auth/', include('djoser.urls.authtoken')),
+    path('', include(router.urls)),
+    path('', include('djoser.urls')),
 ]

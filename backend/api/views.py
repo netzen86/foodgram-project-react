@@ -44,14 +44,9 @@ class SwitchOnOffViewSet(CreateDestroyModelViewSet):
     error_text_destroy = "Невозможно удалить запись"
     permission_classes = (permissions.IsAuthenticated,)
 
-    def get_queryset(self) -> models.QuerySet:
-        return self.model_class.objects.all()
-
     def get_object(self) -> models.Model:
-        return get_object_or_404(
-            self.model_class,
-            pk=self.kwargs.get(self.router_pk)
-        )
+        queryset = self.get_queryset()
+        return get_object_or_404(queryset, self.router_pk)
 
     def is_on(self) -> bool:
         pass
@@ -111,7 +106,7 @@ class RecipeFavoriteViewSet(SwitchOnOffViewSet):
 
 
 class RecipeCartViewSet(SwitchOnOffViewSet):
-    """Сериализатор для добавления в список покупок"""
+    """Представление для добавления в список покупок"""
 
     model_class = Recipe
     serializer_class = RecipeCompactSerializer
@@ -173,7 +168,6 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (IsAdminOrAuthorOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = IngredientFilter
-    pagination_class = None
 
 
 class TagsViewSet(viewsets.ReadOnlyModelViewSet):
@@ -182,7 +176,6 @@ class TagsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tags.objects.all()
     serializer_class = TagsSerializer
     permission_classes = (IsAdminOrAuthorOrReadOnly,)
-    pagination_class = None
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -190,6 +183,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
+    pagination_class = PageNumberLimitPagination
     permission_classes = (IsAdminOrAuthorOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter

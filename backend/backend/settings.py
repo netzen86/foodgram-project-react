@@ -15,7 +15,8 @@ SECRET_KEY = get_random_secret_key()
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['backend']
+# ALLOWED_HOSTS = ['backend', 'localhost', '127.0.0.1', '172.20.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -104,7 +105,7 @@ AUTH_USER_MODEL = 'users.CustomUser'
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 6,
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',

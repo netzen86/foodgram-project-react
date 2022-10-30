@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.db.models import Count
 from django.utils.safestring import mark_safe
 
 from .models import Ingredients, IngredientsRecipe, Recipe, Tags, TagsRecipe
@@ -37,7 +36,7 @@ class RecipeAdmin(admin.ModelAdmin):
     readonly_fields = ('favorited', 'preview_image',)
 
     def favorited(self, instance: Recipe) -> int:
-        return instance.users_favorited.aggregate(Count('id'))['id__count']
+        return instance.users_favorited.count()
 
     favorited.short_description = 'Общее число добавлений рецепта в избранное'
 

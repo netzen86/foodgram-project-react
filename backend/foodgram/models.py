@@ -14,6 +14,7 @@ class Ingredients(models.Model):
     )
 
     class Meta:
+        ordering = ('id',)
         verbose_name = 'Ингридиент'
         verbose_name_plural = 'Ингридиенты'
 
@@ -55,6 +56,7 @@ class Recipe(models.Model):
         verbose_name='Автор'
     )
     name = models.CharField(
+        db_index=True,
         max_length=200,
         verbose_name='Название'
     )

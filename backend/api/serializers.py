@@ -1,7 +1,6 @@
 import base64
 
 from django.core.files.base import ContentFile
-from django.db.models import Count
 from djoser import serializers
 from foodgram.models import Ingredients, IngredientsRecipe, Recipe, Tags
 from rest_framework import serializers
@@ -102,8 +101,8 @@ class UserSubscribedSerializer(UserSerializer):
         return RecipeCompactSerializer(recipes, many=True).data
 
     @staticmethod
-    def get_recipes_count(obj: User) -> int:
-        return obj.recipes.aggregate(Count('id'))['id__count']
+    def get_recipes_count(obj):
+        return obj.recipes.count()
 
 
 class IngredientsSerializer(serializers.ModelSerializer):
