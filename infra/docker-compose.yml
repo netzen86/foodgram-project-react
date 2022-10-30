@@ -23,8 +23,8 @@ services:
       - static_data_admin:/app/static/admin/
       - static_data_drf:/app/static/rest_framework/
       - media_data:/app/media/  
-    ports:
-      - "8000:8000"
+    # ports:
+    #   - "8000:8000"
     depends_on:
       - db
     env_file:
