@@ -46,7 +46,10 @@ class SwitchOnOffViewSet(CreateDestroyModelViewSet):
 
     def get_object(self) -> models.Model:
         queryset = self.get_queryset()
-        return get_object_or_404(queryset, self.router_pk)
+        return get_object_or_404(
+            queryset,
+            pk=self.kwargs.get(self.router_pk)
+        )
 
     def is_on(self) -> bool:
         pass
