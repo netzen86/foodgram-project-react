@@ -4,7 +4,7 @@ from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.http import FileResponse
-from django.shortcuts import get_object_or_404
+# from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from foodgram.models import Ingredients, Recipe, Tags
 from reportlab.lib.pagesizes import A4
