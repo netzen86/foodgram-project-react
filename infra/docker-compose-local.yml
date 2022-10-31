@@ -33,6 +33,7 @@ services:
       - ./.env
   nginx:
     image: nginx:1.19.3
+    restart: always
     ports:
       - "80:80"
     volumes:
@@ -42,6 +43,8 @@ services:
       - media_data:/usr/share/nginx/html/media/
       - static_data_admin:/usr/share/nginx/html/static/admin/
       - static_data_drf:/usr/share/nginx/html/static/rest_framework/
+    depends_on:
+      - frontend
 
 volumes:
   db_data:

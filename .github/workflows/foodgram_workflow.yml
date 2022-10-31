@@ -87,6 +87,7 @@ jobs:
             echo BE_EMAIL=${{ secrets.BE_EMAIL }} >> .env
             echo BE_PASSWORD=${{ secrets.BE_PASSWORD }} >> .env
             echo MEDIA=${{ secrets.MEDIA }} >> .env
+            echo DEBUG=${{ secrets.DEBUG }} >> .env
             rm docker-compose.yml
             tar -xvf files.tar --strip-components=1
             rm -f files.tar
