@@ -57,6 +57,7 @@ pip3 install -r requirements.txt
 python3 manage.py makemigrations
 ```
 # Запуск приложения локально
+
 ```
 в папке проекта:
 docker compose -f infra/docker-compose-local.yml up --build -d

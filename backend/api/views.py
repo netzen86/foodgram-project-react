@@ -2,9 +2,9 @@ import io
 from datetime import datetime
 
 from django.contrib.auth import get_user_model
-from django.db import models
+from django.db.models import Model
 from django.http import FileResponse
-# from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from foodgram.models import Ingredients, Recipe, Tags
 from reportlab.lib.pagesizes import A4
@@ -38,26 +38,18 @@ class SubscriptionsViewSet(ListModelViewSet):
 
 
 class SwitchOnOffViewSet(CreateDestroyModelViewSet):
-    model_class = models.Model
+    """Базовый класс"""
+    model_class = Model
     router_pk = "id"
     error_text_create = "Невозможно добавить запись"
     error_text_destroy = "Невозможно удалить запись"
     permission_classes = (permissions.IsAuthenticated,)
 
-    # def get_object(self) -> models.Model:
     def get_object(self):
-        return self.queryset.get(
-            id=self.kwargs.get(self.router_pk)
-        )
-        # queryset = self.get_queryset()
-        # return get_object_or_404(
-        #     queryset,
-        #     pk=self.kwargs.get(self.router_pk)
-        # )
-        # return get_object_or_404(
-        #     self.model_class,
-        #     pk=self.kwargs.get(self.router_pk)
-        # )
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset, pk=self.kwargs.get(self.router_pk))
+        self.check_object_permissions(self.request, obj)
+        return obj
 
     def is_on(self) -> bool:
         pass
@@ -97,6 +89,7 @@ class RecipeFavoriteViewSet(SwitchOnOffViewSet):
     """Сериализатор для добавления в избранное"""
 
     model_class = Recipe
+    queryset = Recipe.objects.all()
     serializer_class = RecipeCompactSerializer
     router_pk = "recipe_id"
     error_text_create = "Рецепт уже добавлен в список избранное"
@@ -120,6 +113,7 @@ class RecipeCartViewSet(SwitchOnOffViewSet):
     """Представление для добавления в список покупок"""
 
     model_class = Recipe
+    queryset = Recipe.objects.all()
     serializer_class = RecipeCompactSerializer
     router_pk = "recipe_id"
     error_text_create = "Рецепт уже добавлен список покупок"
@@ -145,6 +139,7 @@ class SubscribeViewSet(SwitchOnOffViewSet):
     """Представление для подписки"""
 
     model_class = User
+    queryset = User.objects.all()
     serializer_class = UserSubscribedSerializer
     router_pk = 'user_id'
     error_text_create = "Подписка уже существует"
