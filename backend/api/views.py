@@ -44,12 +44,16 @@ class SwitchOnOffViewSet(CreateDestroyModelViewSet):
     error_text_destroy = "Невозможно удалить запись"
     permission_classes = (permissions.IsAuthenticated,)
 
-    def get_object(self) -> models.Model:
-        queryset = self.get_queryset()
-        return get_object_or_404(
-            queryset,
-            pk=self.kwargs.get(self.router_pk)
+    # def get_object(self) -> models.Model:
+    def get_object(self):
+        return self.queryset.get(
+            id=self.kwargs.get(self.router_pk)
         )
+        # queryset = self.get_queryset()
+        # return get_object_or_404(
+        #     queryset,
+        #     pk=self.kwargs.get(self.router_pk)
+        # )
         # return get_object_or_404(
         #     self.model_class,
         #     pk=self.kwargs.get(self.router_pk)
