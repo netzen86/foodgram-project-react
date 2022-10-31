@@ -46,12 +46,24 @@ cd frontend/
 docker build . -t netzen86/foodgram-front:v2
 docker push netzen86/foodgram-front:v2
 ```
+# Создание миграций в исходниках
+```
+в папке проекта:
+docker compose -f infra/docker-compose-local.yml up db --build -d
+cd backend
+python3 -m venv venv
+. venv/bin/activate
+pip3 install -r requirements.txt
+python3 manage.py makemigrations
+```
 # Запуск приложения локально
 ```
-docker-compose -f ./infra/docker-compose-local.yml up -d
-python3 ./backend/manage.py runserver 
-docker-compose -f ./infra/docker-compose-local.yml exec backend python manage.py fill_db
-docker-compose -f ./infra/docker-compose-local.yml exec backend python manage.py createsuperuser
-
+в папке проекта:
+docker compose -f infra/docker-compose-local.yml up --build -d
+cd infra
+docker compose -f docker-compose-local.yml exec backend python3 manage.py migrate
+docker compose -f docker-compose-local.yml exec backend python3 manage.py createadmin
+docker compose -f docker-compose-local.yml exec backend python3 manage.py fill_db
+docker-compose -f docker-compose-local.yml exec backend python manage.py collectstatic --no-input
 ```
 [Docker Hub](https://hub.docker.com/repository/docker/netzen86/foodgram-back)

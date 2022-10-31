@@ -136,3 +136,6 @@ token_temp.json
 
 # папка с медиа
 backend/media
+
+# файлы при локальном запуске проекта
+infra/backend
