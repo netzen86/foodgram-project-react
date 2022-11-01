@@ -53,6 +53,9 @@ jobs:
         run: |
           mkdir ../copy_file
           cp infra/docker-compose.yml ../copy_file
+          cp infra/nginx.conf ../copy_file
+          cp -r data ../copy_file
+          cp -r docs ../copy_file
           tar -cvf files.tar ../copy_file/*
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
