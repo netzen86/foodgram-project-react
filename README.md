@@ -14,38 +14,32 @@
 
 # Технологии
 
-Django 2.2.16
-Django REST framework 3.12.4
-Gunicorn 20.0.4
-Nginx 1.21.3
-Postgres 13.0
-Docker-compose 1.29.2
-Github actions
+- Django 2.2.16
+- Django REST framework 3.12.4
+- Gunicorn 20.0.4
+- Nginx 1.21.3
+- Postgres 13.0
+- Docker-compose 1.29.2
+- DockerHub
+- GitHub
+- Github actions
+- Yandex cloud
 
-## Запуск приложения
-
-Скопировать файл конфигурации nginx на сервер в домашний каталог
-``` 
-./nginx/default.conf
+# Запуск приложения
+## Сборка docker image фронтэнда
 ```
-Запушить проект на github 
+docker login
+cd frontend/
+docker build . -t "ваш логин DockerHub"/foodgram-front:v1
+docker push "ваш логин DockerHub"/foodgram-front:v1
+```
+## Запушить проект на github 
 ```
 git add .
 git commit -m 'коментарий'
 git push
 ```
 
-# Build docker image
-
-```
-docker login -u netzen86
-docker build -f backend/Dockerfile -t netzen86/foodgram-back:v1 .
-docker push netzen86/foodgram-back:v1 
-
-cd frontend/
-docker build . -t netzen86/foodgram-front:v2
-docker push netzen86/foodgram-front:v2
-```
 # Создание миграций в исходниках
 ```
 в папке проекта:
@@ -57,7 +51,6 @@ pip3 install -r requirements.txt
 python3 manage.py makemigrations
 ```
 # Запуск приложения локально
-
 ```
 в папке проекта:
 docker compose -f infra/docker-compose-local.yml up --build -d
@@ -68,3 +61,8 @@ docker compose -f docker-compose-local.yml exec backend python3 manage.py fill_d
 docker-compose -f docker-compose-local.yml exec backend python manage.py collectstatic --no-input
 ```
 [Docker Hub](https://hub.docker.com/repository/docker/netzen86/foodgram-back)
+
+# Авторы
+- Бэкенд: Дмитрий Новиков
+- GitHub Actions pipline: Дмитрий Новиков
+- Фронтэнд: Яндекс Практикум
