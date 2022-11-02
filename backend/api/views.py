@@ -2,7 +2,6 @@ import io
 from datetime import datetime
 
 from django.contrib.auth import get_user_model
-from django.db.models import Model
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -39,7 +38,6 @@ class SubscriptionsViewSet(ListModelViewSet):
 
 class SwitchOnOffViewSet(CreateDestroyModelViewSet):
     """Базовый класс"""
-    model_class = Model
     router_pk = "id"
     error_text_create = "Невозможно добавить запись"
     error_text_destroy = "Невозможно удалить запись"
@@ -52,7 +50,7 @@ class SwitchOnOffViewSet(CreateDestroyModelViewSet):
         return obj
 
     def is_on(self) -> bool:
-        pass
+        raise NotImplementedError('Определите метод is_on!')
 
     @staticmethod
     def error(text: str) -> Response:
@@ -86,7 +84,7 @@ class SwitchOnOffViewSet(CreateDestroyModelViewSet):
 
 
 class RecipeFavoriteViewSet(SwitchOnOffViewSet):
-    """Сериализатор для добавления в избранное"""
+    """Представление для добавления в избранное"""
 
     model_class = Recipe
     queryset = Recipe.objects.all()
@@ -185,7 +183,7 @@ class TagsViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    """Представление для работы с тэгами."""
+    """Представление для работы с рецептами."""
 
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
@@ -207,6 +205,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
 
 class SaveCartView(views.APIView):
+    """Базовое представление для сохранения списка покупок."""
+
     permission_classes = (permissions.IsAuthenticated,)
     font_path = "./static/fonts/JetBrainsMono-Medium.ttf"
     filename = "file.pdf"
@@ -236,7 +236,9 @@ class SaveCartView(views.APIView):
 
 
 class RecipeCartDownloadView(SaveCartView):
-    filename = f'Список покупок {datetime.date(datetime.now())}.pdf'
+    """Представление для сохранения списка покупок."""
+
+    filename = f'Список покупок {datetime.date(datetime.now())}.pdf\n'
 
     def get_text_lines(self):
         recipes = self.request.user.cart.all()
