@@ -6,8 +6,8 @@ WORKDIR /app
 COPY backend/. .
 # Выполняем установку зависимостей внутри контейнера.
 # раскоментировать что бы собрать на маке
-RUN apt-get update \
-   && apt-get -y install libpq-dev gcc
+# RUN apt-get update \
+#    && apt-get -y install libpq-dev gcc
 RUN python3 -m pip install --upgrade pip setuptools
 RUN pip3 install -r /app/requirements.txt --no-cache-dir
 
