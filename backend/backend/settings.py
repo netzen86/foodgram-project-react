@@ -15,7 +15,7 @@ SECRET_KEY = get_random_secret_key()
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', default='False'),
 
-ALLOWED_HOSTS = ['backend', 'localhost', '127.0.0.1', '172.20.0.1']
+ALLOWED_HOSTS = ['backend']
 
 
 # Application definition
