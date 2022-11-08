@@ -1,16 +1,12 @@
 ![foodgram_workflow](https://github.com/netzen86/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
 # Проект доступен по адресу
-* [http://foodgram.netzen.su](http://foodgram.netzen.su)
+* [http://foodgram.netzen.dev](http://foodgram.netzen.dev)
 
 ## Админка проекта
-* [http://foodgram.netzen.su/admin/](http://foodgram.netzen.ыг/admin/)
+* [http://foodgram.netzen.dev/admin/](http://foodgram.netzen.dev/admin/)
 
-  Логин: admin
-
-  Пароль: p@s$w0rd777
-
-## API проекта
-* [http://foodgram.netzen.su/api/docs/](http://foodgram.netzen.su/api/docs/)
+## Оприсание API проекта
+* [http://foodgram.netzen.dev/api/docs/](http://foodgram.netzen.dev/api/docs/)
 
 # Технологии
 
@@ -52,6 +48,7 @@ python3 manage.py makemigrations
 ```
 # Запуск приложения локально
 ```
+закоментировать строки конфигурации https в файле конфигурации NGINX (/infra/nginx.conf)
 в папке проекта:
 docker compose -f infra/docker-compose-local.yml up --build -d
 cd infra
@@ -60,7 +57,11 @@ docker compose -f docker-compose-local.yml exec backend python3 manage.py create
 docker compose -f docker-compose-local.yml exec backend python3 manage.py fill_db
 docker-compose -f docker-compose-local.yml exec backend python manage.py collectstatic --no-input
 ```
-[Docker Hub](https://hub.docker.com/repository/docker/netzen86/foodgram-back)
+# TODO
+- добавить в piplene генерацию ssl сертификатов
+- реализовать функцию подтверждения e-mail
+- реализовать функцию сброса пароля
+- написать тесты
 
 # Авторы
 - Бэкенд: Дмитрий Новиков
