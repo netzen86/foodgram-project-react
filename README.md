@@ -38,7 +38,14 @@ git add .
 git commit -m 'коментарий'
 git push
 ```
-
+## HTTPS
+Сертификат пока получает certbot в контейнере nginx
+```
+apt install certbot
+certbot --nginx
+systemctl reload nginx 
+sudo certbot renew
+```
 # Создание миграций в исходниках
 ```
 в папке проекта:
